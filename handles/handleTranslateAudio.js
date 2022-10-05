@@ -2,16 +2,17 @@
 import * as speech from '@google-cloud/speech'
 import { decryptMedia } from '@open-wa/wa-automate'
 import { Storage } from '@google-cloud/storage'
+import translate from '@vitalets/google-translate-api'
 import dotenv from 'dotenv'
 dotenv.config()
 import mime from 'mime'
 import fs from 'fs'
 const storage = new Storage()
-
 const bucket = storage.bucket(process.env.BUCKET_NAME)
 const speechClient = new speech.SpeechClient()
 
-const speechToTextHandler = async (client, message) => {
+const translateAudio = async (client, message) => {
+    // const language = message.text.substring(9).toUpperCase();
     if (!message.quotedMsg) {
         await client.sendText(message.from, 'Nenhum audio selecionado.')
         return
@@ -38,7 +39,7 @@ const speechToTextHandler = async (client, message) => {
     const config = {
         encoding: 'OGG_OPUS',
         sampleRateHertz: 16000,
-        languageCode: 'pt-BR',
+        languageCode: 'en-US',
     }
     const request = {
         audio: audio,
@@ -48,10 +49,20 @@ const speechToTextHandler = async (client, message) => {
     const transcription = await response.results
         .map((result) => result.alternatives[0].transcript)
         .join('\n')
-    await client.sendText(
-        message.from,
-        `Palavras reconhecidas no Audio : ${transcription}`
-    )
+    translate(transcription, { to: 'pt' })
+        .then(async (res) => {
+            await client.sendText(
+                message.from,
+                `Palavras reconhecidas e traduzidas no Audio : ${res.text}`
+            )
+        })
+        .catch(async (err) => {
+            await client.sendText(
+                message.from,
+                `Não foi possível traduzir o audio, motivo : ${err}`
+            )
+        })
+
     bucket.deleteFiles(filename)
 }
-export default speechToTextHandler
+export default translateAudio

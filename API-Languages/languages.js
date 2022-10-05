@@ -1,0 +1,18 @@
+const languages = [
+    'af-ZA',
+    'am-ET',
+    'ar-AE',
+    'az-AZ',
+    'bg-BG',
+    'bn-BD',
+    'bn-IN',
+    'bs-BA',
+    'ca-ES',
+    'cs-CZ',
+    'da-DK',
+    'de-DE',
+    'el-GR',
+    'en-US',
+    'es-ES',
+    'fr-CR',
+]
