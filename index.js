@@ -5,6 +5,8 @@ import speechToTextHandler from './handles/handlerSpeechToText.js'
 import translateAudio from './handles/handleTranslateAudio.js'
 import createAudio from './handles/handleTextToSpeech.js'
 import convertFile from './handles/handleConvertFile.js'
+import diceHandler from './handles/handleDice.js'
+import handlerHoroscope from './handles/handleSign.js'
 
 function start(client = Client) {
     client.onAnyMessage(async (message) => {
@@ -23,8 +25,15 @@ function start(client = Client) {
         if (message.text.includes('!yt')) {
             await ytHandler(client, message)
         }
-        if (message.text.includes('!Speech'))
+        if (message.text.includes('!Speech')) {
             await speechToTextHandler(client, message)
+        }
+        if (message.text.includes('!d')) {
+            await diceHandler(client, message)
+        }
+        if (message.text.includes('!h')) {
+            await handlerHoroscope(client, message)
+        }
     })
 }
 

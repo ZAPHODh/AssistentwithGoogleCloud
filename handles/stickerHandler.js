@@ -6,10 +6,11 @@ import fs from 'fs'
 
 const stickerHandler = async (client, message) => {
     //verifying if there is any image or video on message
-    if (message.mimetype == false) {
+    if (!message.mimetype) {
         await client.sendText(message.from, 'Nenhuma imagem encontrada')
+        return
     }
-    //getting the mimetype of the archive
+    //decrypting the mimetype
     const filename = `${message.t}.${mime.extension(message.mimetype)}`
     const mediaData = await decryptMedia(message)
     const fileBase64 = `data:${message.mimetype};base64,${mediaData.toString(
@@ -33,7 +34,6 @@ const stickerHandler = async (client, message) => {
                 // Defining the text font
                 const image = await Jimp.read(data)
                 const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE)
-                console.log(image.bitmap.width * 0.75)
                 image.print(
                     font,
                     image.bitmap.width * 0.2,
